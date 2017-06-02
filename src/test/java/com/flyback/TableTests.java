@@ -5,6 +5,8 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class TableTests {
     @Test
@@ -12,7 +14,8 @@ public class TableTests {
         String tableName = "THINGS";
         Collection<Column> columnsForTable = getColumns();
         Collection<Constraint> allConstraints = getConstraints();
-        Table table = new Table(tableName, columnsForTable, allConstraints);
+        List<Index> indexList = getIndexes();
+        Table table = new Table(tableName, columnsForTable, allConstraints, indexList);
         String tableDefinition = table.getDefinition();
         String expected = "CREATE TABLE THINGS(\n" +
                 "    ID NUMBER NOT NULL,\n" +
@@ -24,7 +27,11 @@ public class TableTests {
                 "    CREATED_AT DATE NOT NULL,\n" +
                 "    DELETED_AT DATE NULL,\n" +
                 "    CONSTRAINT CHK_THINGS_DATE_RANGE CHECK(CREATED_AT<DELETED_AT)\n" +
-                ");";
+                ");\n" +
+                "\n" +
+                "CREATE UNIQUE INDEX IDX__THINGS__NAME ON THINGS(NAME);\n" +
+                "\n" +
+                "CREATE INDEX IDX__THINGS__CREATED_AT ON THINGS(CREATED_AT, DELETED_AT);";
         Assert.assertEquals(expected, tableDefinition);
     }
 
@@ -53,6 +60,13 @@ public class TableTests {
                     new TestColumn("CREATED_AT", "CREATED_AT DATE NOT NULL"),
                     new TestColumn("DELETED_AT", "DELETED_AT DATE NULL")
             );
+    }
+
+    private List<Index> getIndexes(){
+        return Arrays.asList(
+                new TestIndex("IDX__THINGS__NAME", "THINGS", true, Collections.singletonList("NAME")),
+                new TestIndex("IDX__THINGS__CREATED_AT", "THINGS", false, Arrays.asList("CREATED_AT", "DELETED_AT"))
+        );
     }
 
     private class TestColumn implements Column{
@@ -95,5 +109,44 @@ public class TableTests {
             return outputOrder;
         }
 
+    }
+
+    private class TestIndex implements Index{
+        private final String indexName;
+        private final String tableName;
+        private final boolean isUnique;
+        private final List<String> columns;
+
+        private TestIndex(String indexName, String tableName, boolean isUnique, List<String> columns) {
+            this.indexName = indexName;
+            this.tableName = tableName;
+            this.isUnique = isUnique;
+            this.columns = columns;
+        }
+
+        @Override
+        public String getIndexName() {
+            return indexName;
+        }
+
+        @Override
+        public String getTableName() {
+            return tableName;
+        }
+
+        @Override
+        public boolean isUnique() {
+            return isUnique;
+        }
+
+        @Override
+        public void addColumn(String column) {
+
+        }
+
+        @Override
+        public List<String> getColumns() {
+            return columns;
+        }
     }
 }

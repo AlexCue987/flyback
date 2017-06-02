@@ -9,18 +9,21 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Table implements SaveableAsTextFile {
-    private final List<HasDefinition> itemDefinitions;
+    private final List<HasDefinition> columnsAndConstraints;
     private final String tableName;
+    private final List<Index> indexes;
 
     public Table(String tableName,
                  Collection<Column> columnsForTable,
-                 Collection<Constraint> allConstraints) {
+                 Collection<Constraint> allConstraints,
+                 List<Index> indexes) {
         this.tableName = tableName;
+        this.indexes = indexes;
         Map<String, Constraint> constraintsForTable = allConstraints.stream().
                 filter(c -> c.getTableName().equals(tableName)).
                 collect(Collectors.toMap(Constraint::getConstraintName, Function.identity()));
         List<String> processedColumnNames = new ArrayList<>();
-        itemDefinitions = new ArrayList<>();
+        columnsAndConstraints = new ArrayList<>();
         for(Column column: columnsForTable){
             addColumn(processedColumnNames, column);
             addConstraintsWithAllColumnsAdded(constraintsForTable, processedColumnNames);
@@ -29,12 +32,12 @@ public class Table implements SaveableAsTextFile {
 
     private void addConstraintsWithAllColumnsAdded(Map<String, Constraint> constraintsForTable, List<String> processedColumnNames) {
         List<Constraint> constraintsToProcess = getConstraintsToProcess(constraintsForTable, processedColumnNames);
-        itemDefinitions.addAll(constraintsToProcess);
+        columnsAndConstraints.addAll(constraintsToProcess);
         constraintsToProcess.forEach(constraint -> constraintsForTable.remove(constraint.getConstraintName()));
     }
 
     private void addColumn(List<String> processedColumnNames, Column column) {
-        itemDefinitions.add(column);
+        columnsAndConstraints.add(column);
         processedColumnNames.add(column.getName());
     }
 
@@ -50,16 +53,15 @@ public class Table implements SaveableAsTextFile {
         return constraint.getColumnNames().stream().allMatch(processedColumnNames::contains);
     }
 
-    List<HasDefinition> getItemDefinitions() {
-        return itemDefinitions;
-    }
-
     public String getDefinition(){
-        final String tableDefinitionFormat = "CREATE TABLE %s(\n    %s\n);";
-        String commaSeparatedItems = itemDefinitions.stream().
+        final String tableDefinitionFormat = "CREATE TABLE %s(\n    %s\n);\n\n%s";
+        String commaSeparatedColumnsAndConstraints = columnsAndConstraints.stream().
                 map(HasDefinition::getDefinition).
                 collect(Collectors.joining(",\n    "));
-        return String.format(tableDefinitionFormat, tableName, commaSeparatedItems);
+        String lineSeparatedIndexes = indexes.stream().
+                map(HasDefinition::getDefinition).
+                collect(Collectors.joining("\n\n"));
+        return String.format(tableDefinitionFormat, tableName, commaSeparatedColumnsAndConstraints, lineSeparatedIndexes);
     }
 
     public String getFileName(){

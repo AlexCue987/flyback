@@ -21,7 +21,7 @@ public class UniqueConstraintTests {
                 constraints, systemGeneratedName);
         constraint.addColumnName("REASON");
         String actual = constraint.getDefinition();
-        Assert.assertEquals("CONSTRAINT UNQ_TASKS UNIQUE(STARTED_AT,REASON)", actual);
+        Assert.assertEquals("CONSTRAINT UNQ_TASKS UNIQUE(STARTED_AT, REASON)", actual);
     }
 
     @Test
@@ -31,6 +31,6 @@ public class UniqueConstraintTests {
                 constraints, systemGeneratedName);
         constraint.addColumnName("REASON");
         String actual = constraint.getDefinition();
-        Assert.assertEquals("UNIQUE(STARTED_AT,REASON)", actual);
+        Assert.assertEquals("UNIQUE(STARTED_AT, REASON)", actual);
     }
 }

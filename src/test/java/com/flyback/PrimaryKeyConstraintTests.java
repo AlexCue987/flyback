@@ -21,7 +21,7 @@ public class PrimaryKeyConstraintTests {
                 constraints, systemGeneratedName);
         constraint.addColumnName("WHARF_NUMBER");
         String actual = constraint.getDefinition();
-        Assert.assertEquals("CONSTRAINT PK_WHARFS PRIMARY KEY(PORT_ID,WHARF_NUMBER)", actual);
+        Assert.assertEquals("CONSTRAINT PK_WHARFS PRIMARY KEY(PORT_ID, WHARF_NUMBER)", actual);
     }
 
     @Test
@@ -31,6 +31,6 @@ public class PrimaryKeyConstraintTests {
                 constraints, systemGeneratedName);
         constraint.addColumnName("WHARF_NUMBER");
         String actual = constraint.getDefinition();
-        Assert.assertEquals("PRIMARY KEY(PORT_ID,WHARF_NUMBER)", actual);
+        Assert.assertEquals("PRIMARY KEY(PORT_ID, WHARF_NUMBER)", actual);
     }
 }

@@ -2,6 +2,9 @@ package com.flyback.oracle;
 
 import com.flyback.Column;
 import com.flyback.Constraint;
+import com.flyback.Index;
+import com.flyback.IndexColumn;
+import com.flyback.IndexesForTableFactory;
 import com.flyback.SaveableAsTextFile;
 import com.flyback.Table;
 
@@ -13,11 +16,15 @@ public class OracleTablesDdlExtractor {
     private final OracleConnectionFactory connectionFactory;
     private final String owner;
     private final OracleColumnsReader oracleColumnsReader;
+    private final IndexesForTableFactory indexesForTableFactory;
 
-    public OracleTablesDdlExtractor(String owner, String pwd, String connectionString){
+    public OracleTablesDdlExtractor(String owner, String pwd, String connectionString) throws SQLException, ClassNotFoundException {
         connectionFactory = new OracleConnectionFactory(owner, pwd, connectionString);
         this.owner = owner;
         oracleColumnsReader = new OracleColumnsReader(connectionFactory);
+        List<Index> allIndexes = getAllIndexes(connectionFactory);
+        List<IndexColumn> allIndexColumns = getAllIndexColumnss(connectionFactory);
+        indexesForTableFactory = new IndexesForTableFactory(allIndexes, allIndexColumns);
     }
 
     public List<SaveableAsTextFile> get() throws SQLException, ClassNotFoundException {
@@ -31,7 +38,8 @@ public class OracleTablesDdlExtractor {
     private Table getTable(String tableName, List<Constraint> constraints) {
         try {
             List<Column> columns = oracleColumnsReader.get(tableName);
-            return new Table(tableName, columns, constraints);
+            List<Index> indexes = indexesForTableFactory.get(tableName);
+            return new Table(tableName, columns, constraints, indexes);
         }catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -43,5 +51,15 @@ public class OracleTablesDdlExtractor {
 
     private List<String> getTableNames(String owner) throws SQLException, ClassNotFoundException {
         return new OracleTableNamesReader(connectionFactory).get(owner);
+    }
+
+    private List<Index> getAllIndexes(OracleConnectionFactory connectionFactory) throws SQLException, ClassNotFoundException {
+        OracleIndexesReader oracleIndexesReader = new OracleIndexesReader(connectionFactory);
+        return oracleIndexesReader.get();
+    }
+
+    private List<IndexColumn> getAllIndexColumnss(OracleConnectionFactory connectionFactory) throws SQLException, ClassNotFoundException {
+        OracleIndexColumnsReader oracleIndexColumnsReader = new OracleIndexColumnsReader(connectionFactory);
+        return oracleIndexColumnsReader.get();
     }
 }

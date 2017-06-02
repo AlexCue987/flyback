@@ -42,7 +42,7 @@ public abstract class Constraint implements HasDefinition, Comparable<Constraint
     }
 
     protected String getCommaSeparatedColumnsList(){
-        return getColumnNames().stream().collect(Collectors.joining(","));
+        return getColumnNames().stream().collect(Collectors.joining(", "));
     }
 
     private String getComparisonKey(){
