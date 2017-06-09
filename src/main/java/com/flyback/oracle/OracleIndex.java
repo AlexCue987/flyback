@@ -1,13 +1,23 @@
 package com.flyback.oracle;
 
 import com.flyback.Index;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
+@ToString
 public class OracleIndex implements Index {
+    @NonNull
     private final String indexName;
+    @NonNull
     private final String indexType;
+    @NonNull
     private final String tableName;
     private final boolean unique;
     private final List<String> columns;
@@ -21,41 +31,7 @@ public class OracleIndex implements Index {
     }
 
     @Override
-    public String toString() {
-        return "OracleIndex{" +
-                "indexName='" + indexName + '\'' +
-                ", indexType='" + indexType + '\'' +
-                ", tableName='" + tableName + '\'' +
-                ", unique=" + unique +
-                '}';
-    }
-
-    @Override
-    public String getIndexName() {
-        return indexName;
-    }
-
-    public String getIndexType() {
-        return indexType;
-    }
-
-    @Override
-    public String getTableName() {
-        return tableName;
-    }
-
-    @Override
-    public boolean isUnique() {
-        return unique;
-    }
-
-    @Override
     public void addColumn(String column){
         columns.add(column);
-    }
-
-    @Override
-    public List<String> getColumns() {
-        return columns;
     }
 }

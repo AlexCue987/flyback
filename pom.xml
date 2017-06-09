@@ -27,6 +27,12 @@
             <artifactId>ojdbc6</artifactId>
             <version>11.2.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.0</version>
+        </dependency>
+
 
     </dependencies>
 

@@ -1,13 +1,23 @@
 package com.flyback.oracle;
 
 import com.flyback.Column;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Data
+@EqualsAndHashCode
+@ToString
 public class OracleColumn implements Column {
 
+    @NonNull
     private final String name;
+    @NonNull
     private final String definition;
 
     public OracleColumn(ResultSet resultSet) throws SQLException {
@@ -45,23 +55,4 @@ public class OracleColumn implements Column {
         }
         return type;
     }
-
-    @Override
-    public String toString() {
-        return "Column{" +
-                "name='" + name + '\'' +
-                ", definition='" + definition + '\'' +
-                '}';
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getDefinition() {
-        return definition;
-    }
-
 }
