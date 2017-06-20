@@ -11,3 +11,4 @@ CREATE FUNCTION get_column_expression(p_index_name VARCHAR2, p_column_position N
 
       RETURN SUBSTR(l_data, 1, 100);
   END;
+

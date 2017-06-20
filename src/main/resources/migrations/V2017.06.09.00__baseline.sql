@@ -23,3 +23,4 @@ CONSTRAINT CHK_Is_Active CHECK (Is_Active IN ('Y', 'N') AND ((Is_Active='Y' AND 
 CREATE INDEX IDX_Tasks_Worker_ID ON Tasks(Worker_ID);
 
 CREATE UNIQUE INDEX One_Active_Task_Per_Worker ON Tasks(CASE WHEN Is_Active='Y' THEN Worker_ID END);
+

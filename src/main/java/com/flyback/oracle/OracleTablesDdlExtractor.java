@@ -28,7 +28,7 @@ public class OracleTablesDdlExtractor {
     }
 
     public List<SaveableAsTextFile> get() throws SQLException, ClassNotFoundException {
-        List<String> tableNames = getTableNames(owner);
+        List<String> tableNames = getTableNames();
         List<Constraint> constraints = getConstraints();
         return tableNames.stream().
                 map(tableName -> getTable(tableName, constraints)).
@@ -49,7 +49,7 @@ public class OracleTablesDdlExtractor {
         return new OracleConstraintsReader(connectionFactory).get(owner);
     }
 
-    private List<String> getTableNames(String owner) throws SQLException, ClassNotFoundException {
+    private List<String> getTableNames() throws SQLException, ClassNotFoundException {
         return new OracleTableNamesReader(connectionFactory).get(owner);
     }
 

@@ -1,0 +1,7 @@
+SELECT
+Workers.Name AS Worker_Name,
+Tasks.Description AS Task_Description,
+Tasks.Created_At_Str,
+Tasks.Completed_At_Str,
+Tasks.Is_Active
+FROM Workers JOIN Tasks ON Workers.ID = Tasks.Worker_ID
