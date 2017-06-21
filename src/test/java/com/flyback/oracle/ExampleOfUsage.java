@@ -12,16 +12,16 @@ public class ExampleOfUsage {
     @Ignore
     @Test
     public void generates() throws Exception {
-        String owner = "***";
-        String pwd = "***";
-        String connectionString = "***";
+        String owner = "****";
+        String pwd = "****";
+        String connectionString = "****";
         recreateSchema(owner,
                 pwd,
                 connectionString);
         OracleDdlGenerator.generate(owner,
                 pwd,
                 connectionString,
-                "src/test/resources");
+                "src/test/resources/oracle");
     }
 
     private DataSource getDataSource(String owner, String pwd, String connectionString) throws SQLException {
@@ -42,7 +42,7 @@ public class ExampleOfUsage {
     private Flyway getFlyway(DataSource dataSource) {
         Flyway flyway = new Flyway();
         flyway.setDataSource(dataSource);
-        flyway.setLocations("classpath:/migrations");
+        flyway.setLocations("classpath:/migrations/oracle");
         flyway.setValidateOnMigrate(true);
         return flyway;
     }
